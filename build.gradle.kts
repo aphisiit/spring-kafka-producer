@@ -46,3 +46,15 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks.register("version") {
+	print("${project.version}")
+}
+
+tasks.register<Copy>("copyJar") {
+	from(layout.buildDirectory.dir("libs/${project.name}-${project.version}.jar"))
+	into(layout.buildDirectory.dir("container"))
+	rename { fileName: String -> fileName.replace("-${project.version}.jar", ".jar") }
+}
+
+tasks.named("bootJar") { finalizedBy("copyJar") }
